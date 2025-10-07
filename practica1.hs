@@ -59,3 +59,43 @@ foldNat f z n = f n (foldNat f z (n-1))
 potencia :: Integer -> Integer -> Integer
 potencia n p = foldNat (\x rec -> n*rec) 1 p -- si cambio n por x seria factorial
 
+
+data Polinomio a = X
+                | Cte a
+                | Suma (Polinomio a) (Polinomio a)
+                | Prod (Polinomio a) (Polinomio a)
+
+foldPol :: b               -- para X
+        -> (a -> b)        -- para Cte
+        -> (b -> b -> b)   -- para Suma
+        -> (b -> b -> b)   -- para Prod
+        -> Polinomio a
+        -> b                -- me gusta pensar que el tipo de salida es el mismo que el de la recursion
+foldPol cX cCte cSuma cProd p = case p of  
+    X -> cX
+    Cte n -> cCte n
+    Suma p q  -> cSuma (foldPol cX cCte cSuma cProd p) (foldPol cX cCte cSuma cProd q)
+    Prod p q  -> cProd (foldPol cX cCte cSuma cProd p) (foldPol cX cCte cSuma cProd q)
+
+evaluar :: Num a => a -> Polinomio a -> a
+evaluar n = foldPol n id (+) (*)  
+
+
+data AB a = Nil | Bin (AB a) a (AB a)
+
+foldAB :: b -> (a -> b -> b -> b) -> AB a -> b -- a->b->b->b pues toma la raiz y luego hace fold sobre los dos subarboles
+foldAB base f Nil = base
+foldAB base f (Bin (izq) a (der)) = f a (foldAB base f izq) (foldAB base f der)
+
+recAB :: b -> (a -> AB a -> AB a -> b -> b -> b) -> AB a -> b
+recAB base f nil = base
+recAB base f (Bin (izq) a (der)) = f a izq der (recAB base f izq) (recAB base f der)
+
+altura :: AB a -> Int
+altura = foldAB 0 (\_ rec1 rec2 -> 1 + (max rec1 rec2)) 
+
+t1 :: AB Int
+t1 = Bin (Bin Nil 1 Nil) 2 (Bin Nil 3 (Bin Nil 4 Nil))
+
+cantNodos :: AB a -> Int
+cantNodos = foldAB 0 (\_ rec1 rec2 -> 1 + rec1 + rec2) 
