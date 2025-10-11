@@ -61,3 +61,52 @@ $flip\ const = const\ id$
 flip const x y = const id x y
 -- DUDA, por qué vale? 
 ```
+
+### Ejercicio 3
+#### I)
+ $\forall\ xs::[a] .\ length (duplicar\ xs) = 2 * length\ xs$
+```haskell
+-- Por principio de induccion estructural sobre listas.
+
+-- Caso base P([]):
+length(duplicar []) = 2*length []
+{D0} length([])
+{L0} 0
+{M0} 2*0 --no se que regla sería pero vale
+{L0} 2*length []
+
+-- Paso inductivo ∀x::a. ∀xs::[a]. Usando P(xs) como hipotesis inductiva, quiero ver que P(x:xs):
+length(duplicar (x:xs)) = 2*length (x:xs)
+{D1} length (x:x:duplicar xs)
+{L1} 1 + length (x:duplicar xs)
+{L1} 2 + length (duplicar xs) -- Aca aplique sumar tambien
+{HI} 2 + 2*length xs
+{Factor comun 2} 2*(1 + length xs) -- no se si se hace asi este paso
+{L1} 2 * length (x:xs) 
+
+```
+
+#### II)
+ $\forall xs::[a] .\ \forall ys::[a] .\ length\ (append\ xs\ ys) = length\ xs + length\ ys$
+ ```haskell
+ -- Por inducción estructural sobre listas
+
+ -- Hago inducción sobre xs. Asumo que vale P(xs) y quiero probar P(x:xs) ∀x::a. ∀xs::[a]
+
+ --Caso base P([]):
+ length (append [] ys) = length [] + length ys
+ {A0} length ys
+ {no se} 0 + length ys
+ {L0} length [] + length ys
+
+-- Paso inductivo ∀x::a. ∀xs::[a]. Usando P(xs) como hipotesis inductiva, quiero ver que P(x:xs):
+length (append (x:xs) ys) = length (x:xs) + length ys
+{A1} length (x : append xs ys)
+{L1} 1 + length (append xs ys)
+{HI} 1 + length xs + length ys
+{L1} length (x:xs) + length ys
+ ```
+
+ #### V)
+ $∀ xs::[a] . ∀ p::a->Bool .\ ∀ e::a .\ ((elem\ e\ (filter\ p\ xs)) ⇒ (elem\ e\ xs))\
+  (asumiendo\ Eq\ a)$
