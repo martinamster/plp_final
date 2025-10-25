@@ -30,7 +30,7 @@ f(g nil)
 {id0} id nil, tal como queriamos ver 
 
 Paso inductivo (f.g izq = id izq y f.g der = id der -> qvq vale para f.g (bin x izq der), donde x puede ser a o (a,b):
-Caso x = a:
+Caso x = a: --en realidad acá seria left a y right (a,b)
 f.g (bin a izq der)
 {g1} f (nodoA a (g izq) (g der))
 {f1} bin a (f (g izq)) (f (g der))
