@@ -1,0 +1,44 @@
+Either a b = left a | right b
+AB a = nil | bin a (AB a) (AB a)
+AX a b = vacio | nodoA a (AX a b) (AX a b) | nodoAB a b (AX a b) (AX a b)
+
+(AX a b) y AB (either a (a,b)) son isomorfos
+
+AB (either a (a,b))
+= AB (left a | right (a,b))
+= nil | Bin (Left a) (AB either a (a,b)) (AB either a (a,b)) | Bin (Right (a,b)) (AB either a (a,b)) (AB either a (a,b))
+
+Entonces defino f y g:
+f :: AX a b -> AB (Either a (a,b))
+f vacio = nil
+f (nodoA a izq der) = bin (Left a) (f izq) (f der)
+f (nodoAB a b izq der) = bin (Right (a,b)) (f izq) (f der)
+
+g :: AB (Either a (a,b)) -> AX a b 
+g nil = vacio
+g (bin (Left a) izq der) = nodoA a (g izq) (g der)
+g (bin (Right (a,b)) izq der) = nodoAB a b (g izq) (g der)
+
+
+y ahora tengo que demostrar que f.g = id y que g.f = id
+Primero veamos que 
+f.g ab = id ab
+Caso base ab = nil: 
+f(g nil) 
+{g0} f vacio
+{f0} nil
+{id0} id nil, tal como queriamos ver 
+
+Paso inductivo (f.g izq = id izq y f.g der = id der -> qvq vale para f.g (bin x izq der), donde x puede ser a o (a,b):
+Caso x = a:
+f.g (bin a izq der)
+{g1} f (nodoA a (g izq) (g der))
+{f1} bin a (f (g izq)) (f (g der))
+{HI} bin a (id izq) (id der)
+{id} bin a izq der
+
+El caso x = (a,b) es análogo.
+
+Probar g.f = id es similar.
+
+
